@@ -1,0 +1,123 @@
+import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import { useDispatch } from "react-redux";
+import "react-quill/dist/quill.snow.css"; // Import styles for Quill
+import { addBlog } from "@/redux/slices/blogSlice";
+
+const BlogForm = ({ blog, onClose, onSubmit }) => {
+  const dispatch = useDispatch();
+  const [title, setTitle] = useState(blog ? blog.title : "");
+  const [thumbnailUrl, setThumbnailUrl] = useState(
+    blog ? blog.thumbnailUrl : ""
+  );
+  const [content, setContent] = useState(blog ? blog.content : "");
+
+  const handleQuillChange = (html) => {
+    setContent(html);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const res = dispatch(addBlog({ title, thumbnailUrl, content }));
+    debugger
+    console.log("REs: ", res)
+  };
+
+  // Define Quill modules and formats
+  const quillModules = {
+    toolbar: [
+      //   [{ header: "1" }, { header: "2" }, { font: [] }],
+      //   [{ size: [] }],
+      ["bold", "italic", "underline"],
+      //   ["bold", "italic", "underline", "strike", "blockquote"],
+      //   [{ list: "ordered" }, { list: "bullet" }],
+      //   ["link", "image", "video"],
+      //   ["clean"],
+    ],
+  };
+
+  const quillFormats = [
+    // "header",
+    // "font",
+    // "size",
+    "bold",
+    "italic",
+    "underline",
+    // "strike",
+    // "blockquote",
+    // "list",
+    // "bullet",
+    // "link",
+    // "image",
+    // "video",
+  ];
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg w-11/12 h-5/6 max-w-5xl max-h-full overflow-y-auto">
+        <h2 className="text-2xl mb-4">
+          {blog ? "Edit Blog" : "Create New Blog"}
+        </h2>
+        <form onSubmit={handleSubmit} className="flex flex-col h-full">
+          <div className="mb-4">
+            <label className="block text-gray-700 text-lg">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-lg">Thumbnail URL</label>
+            <input
+              type="text"
+              value={thumbnailUrl}
+              onChange={(e) => setThumbnailUrl(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4 flex-grow">
+            <label className="block text-gray-700 text-lg">Content</label>
+            {/* <ReactQuill
+              value={content}
+              onChange={handleQuillChange}
+              className="quill-editor"
+              modules={quillModules}
+              formats={quillFormats}
+            /> */}
+            <div className="quill-container">
+              <ReactQuill
+                value={content}
+                onChange={handleQuillChange}
+                modules={quillModules}
+                formats={quillFormats}
+                className="editor"
+                style={{ height: "250px" }}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="mr-2 p-3 bg-gray-200 rounded"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="p-3 bg-blue-500 text-white rounded"
+            >
+              {blog ? "Update" : "Create"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default BlogForm;

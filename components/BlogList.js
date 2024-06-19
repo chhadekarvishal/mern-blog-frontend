@@ -1,21 +1,36 @@
-'use client'
-import React, { useEffect } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchBlogs } from "../redux/slices/blogSlice";
+import { fetchBlogs, deleteBlog } from "../redux/slices/blogSlice";
 import Image from "next/image";
+import useAuth from "../hooks/useAuth";
+import BlogForm from "./BlogForm";
 
 const BlogList = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blog.blogs);
   const blogStatus = useSelector((state) => state.blog.status);
   const error = useSelector((state) => state.blog.error);
+  const { isAuthenticated } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     if (blogStatus === "idle") {
       dispatch(fetchBlogs());
     }
-  }, []);
-//   }, [blogStatus, dispatch]);
+  }, [blogStatus, dispatch]);
+
+  const handleDelete = (blogId) => {
+    dispatch(deleteBlog(blogId));
+  };
 
   let content;
 
@@ -29,7 +44,7 @@ const BlogList = () => {
       >
         <div className="flex-shrink-0">
           <Image
-            src="/path/to/thumbnail.jpg" // replace with actual path or blog.thumbnail
+            src="/path/to/thumbnail.jpg"
             alt="Thumbnail"
             width={100}
             height={100}
@@ -41,10 +56,19 @@ const BlogList = () => {
           <p className="text-gray-600">{blog.content.substring(0, 100)}...</p>
         </div>
         <div className="ml-4">
-          <button className="text-blue-500 hover:text-blue-700 mr-2">
-            Edit
-          </button>
-          <button className="text-red-500 hover:text-red-700">Delete</button>
+          {isAuthenticated && (
+            <>
+              <button className="text-blue-500 hover:text-blue-700 mr-2">
+                Edit
+              </button>
+              <button
+                className="text-red-500 hover:text-red-700"
+                onClick={() => handleDelete(blog._id)}
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
     ));
@@ -54,8 +78,17 @@ const BlogList = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-8">
-      <h2 className="text-3xl font-bold mb-6">Blog Posts</h2>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h2 className="text-3xl font-bold mb-6">Blog Posts</h2>
+        <button
+          onClick={openModal}
+          className="mb-4 bg-blue-500 text-white p-2 rounded"
+        >
+          Create New Blog
+        </button>
+      </div>
       {content}
+      {isModalOpen && <BlogForm onClose={closeModal} />}
     </div>
   );
 };

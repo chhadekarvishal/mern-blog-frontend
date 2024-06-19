@@ -1,23 +1,56 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api";
-// const API_URL = "https://mern-blog-server-eta.vercel.app/api";
+import axios from "../../utils/api";
+import { getToken } from "@/utils/authToken";
 
 export const fetchBlogs = createAsyncThunk("blogs/fetchBlogs", async () => {
-  const response = await axios.get(`${API_URL}/blogs`);
+  const response = await axios.get("/blogs");
   return response.data;
 });
 
-export const addBlog = createAsyncThunk("blogs/addBlog", async (blogData) => {
-  const response = await axios.post(API_URL, blogData);
-  return response.data;
-});
+export const addBlog = createAsyncThunk(
+  "blogs/addBlog",
+  async (blogData, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const response = await axios.post("/blogs", blogData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      alert(
+        `${error?.response?.status} ${error?.response?.statusText}, ${error?.response?.data?.message}`
+      );
+      // dispatch(setError({ errorMessage: error.response?.data?.message }));
+      // Use rejectWithValue to send the error to the Redux store
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 export const deleteBlog = createAsyncThunk("blogs/deleteBlog", async (id) => {
-  await axios.delete(`${API_URL}/${id}`);
+  const token = getToken();
+  await axios.delete(`/blogs/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return id;
 });
+
+export const editBlog = createAsyncThunk(
+  "blogs/editBlog",
+  async ({ id, updatedBlog }) => {
+    const token = getToken();
+    const response = await axios.put(`/blogs/${id}`, updatedBlog, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  }
+);
 
 const blogSlice = createSlice({
   name: "blogs",

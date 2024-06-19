@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@import "~react-quill/dist/quill.snow.css";
+/* Style for BlogForm */
+.quill-container {
+    height: 300px; /* Fixed height for ReactQuill container */
+    overflow-y: auto; /* Enable vertical scroll when content exceeds height */
+  }
+  
+  .editor {
+    height: 100%; /* Ensure ReactQuill takes full height of its container */
+  }

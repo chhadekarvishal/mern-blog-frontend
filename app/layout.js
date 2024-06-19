@@ -2,6 +2,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./provider";
+import { ThemeProvider } from "next-themes";
+import { NotificationProvider } from "../context/NotificationContext";
+import NotificationBanner from "../components/NotificationBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,7 +17,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <NotificationProvider>
+            {/* <NotificationBanner /> */}
+            <ThemeProvider attribute="class">{children}</ThemeProvider>
+          </NotificationProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import useAuth from "../hooks/useAuth";
 import { removeToken } from "@/utils/authToken";
 import { useRouter } from "next/navigation";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const NavBar = () => {
   const { isAuthenticated } = useAuth();
@@ -22,13 +23,13 @@ const NavBar = () => {
             <span className="text-white text-xl font-bold">EZZY Blog</span>
           </Link>
         </div>
-        <div className="flex space-x-4">
-          <NavLink href="/blogs" text="Blogs" />
-          <NavLink href="/contact" text="About" />
+        <div className="flex space-x-4 items-center">
+          <NavLink href="/" text="Blogs" />
+          <NavLink href="/" text="About" />
           {/* <NavLink href="/auth/signup" text="Signup" /> */}
           {isAuthenticated ? (
             <>
-              <NavLink href="/profile" text="Profile" />
+              <NavLink href="/" text="Profile" />
               <button
                 className="text-white hover:text-gray-300"
                 onClick={handleLogout}
@@ -42,6 +43,9 @@ const NavBar = () => {
               <NavLink href="/auth/signup" text="Signup" />
             </>
           )}
+          <div>
+            <ThemeSwitcher />
+          </div>
         </div>
       </div>
     </nav>

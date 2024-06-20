@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import dynamic from "next/dynamic"; // Import dynamic from next/dynamic
 import "react-quill/dist/quill.snow.css"; // Import styles for Quill
 import { addBlog, editBlog } from "@/redux/slices/blogSlice";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { showToast } from "@/redux/slices/toastSlice";
 
 // Import ReactQuill dynamically with { ssr: false }
@@ -57,10 +57,32 @@ const BlogForm = ({ blog, onClose }) => {
 
   // Define Quill modules and formats
   const quillModules = {
-    toolbar: [["bold", "italic", "underline"]],
+    toolbar: [
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      // ["link", "image", "video"],
+      ["clean"],
+    ],
   };
 
-  const quillFormats = ["bold", "italic", "underline"];
+  const quillFormats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    // "image",
+    // "video",
+  ];
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

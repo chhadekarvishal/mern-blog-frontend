@@ -10,7 +10,7 @@ const useAuth = () => {
 
   useEffect(() => {
     if (!token || token === undefined) {
-      router.push("/auth/login");
+      router.push("/auth");
       setIsAuthenticated(false);
     } else {
       setIsAuthenticated(true);

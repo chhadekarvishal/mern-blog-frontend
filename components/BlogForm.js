@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import "react-quill/dist/quill.snow.css"; // Import styles for Quill
 import { addBlog, editBlog } from "@/redux/slices/blogSlice";
 import { useRouter } from "next/navigation";
+import { showToast } from "@/redux/slices/toastSlice";
 
 const BlogForm = ({ blog, onClose, onSubmit }) => {
   const router = useRouter();
@@ -23,9 +24,14 @@ const BlogForm = ({ blog, onClose, onSubmit }) => {
     if (blog == null) {
       const result = await dispatch(addBlog({ title, thumbnailUrl, content }));
       if (result.type === "blogs/addBlog/fulfilled") {
+        dispatch(
+          showToast({ message: "Blog created successfully!", type: "success" })
+        );
         router.push("/");
       } else {
-        alert("Error creating blog");
+        dispatch(
+          showToast({ message: "Failed to create blog!", type: "error" })
+        );
       }
     } else {
       const result = await dispatch(
@@ -35,9 +41,12 @@ const BlogForm = ({ blog, onClose, onSubmit }) => {
         })
       );
       if (result.type === "blogs/editBlog/fulfilled") {
+        dispatch(
+          showToast({ message: "Blog edited successfully!", type: "success" })
+        );
         router.push("/");
       } else {
-        alert("Error updating blog");
+        dispatch(showToast({ message: "Failed to edit blog!", type: "error" }));
       }
     }
     onClose();

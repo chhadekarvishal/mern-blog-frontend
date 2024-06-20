@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../utils/api";
 import { getToken } from "@/utils/authToken";
+import { showToast } from "./toastSlice";
 
 export const fetchBlogs = createAsyncThunk("blogs/fetchBlogs", async () => {
   const response = await axios.get("/blogs");
@@ -19,10 +20,10 @@ export const addBlog = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      alert(
-        `${error?.response?.status} ${error?.response?.statusText}, ${error?.response?.data?.message}`
-      );
-      dispatch(setError({ errorMessage: error.response?.data?.message }));
+      showToast({
+        message: `${error?.response?.status} ${error?.response?.statusText}, ${error?.response?.data?.message}`,
+        type: "error",
+      });
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -33,16 +34,23 @@ export const deleteBlog = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const token = getToken();
-      await axios.delete(`/blogs/${id}`, {
+      const res = await axios.delete(`/blogs/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return id;
+      if (res?.status === 200) {
+        showToast({
+          message: "Blog post deleted successfully",
+          type: "error",
+        });
+        return id;
+      }
     } catch (error) {
-      alert(
-        `${error?.response?.status} ${error?.response?.statusText}, ${error?.response?.data?.message}`
-      );
+      showToast({
+        message: `${error?.response?.status} ${error?.response?.statusText}, ${error?.response?.data?.message}`,
+        type: "error",
+      });
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -59,7 +67,6 @@ export const editBlog = createAsyncThunk(
         },
       });
       if (response.status === 200) {
-        alert("Successfully Edited blog");
         return response.data;
       }
     } catch (error) {

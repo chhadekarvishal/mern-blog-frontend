@@ -4,12 +4,10 @@ import { useDispatch } from "react-redux";
 import { login } from "../../../redux/slices/authSlice";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
-import { useNotification } from "../../../context/NotificationContext";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useAuth();
-  const { showNotification } = useNotification();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,11 +17,11 @@ const LoginForm = () => {
     try {
       setLoading(true);
       await dispatch(login({ email, password }));
-      showNotification("Login successful!", "success");
+      // showNotification("Login successful!", "success");
       router.push("/");
     } catch (error) {
       console.error("Login error:", error);
-      showNotification("Login failed. Please check your credentials.", "error");
+      // showNotification("Login failed. Please check your credentials.", "error");
     } finally {
       setLoading(false);
     }

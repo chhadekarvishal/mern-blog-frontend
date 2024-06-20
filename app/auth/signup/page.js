@@ -3,11 +3,9 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { register } from "../../../redux/slices/authSlice";
 import { useRouter } from "next/navigation";
-import { useNotification } from "../../../context/NotificationContext";
 
 const SignupForm = () => {
   const dispatch = useDispatch();
-  const { showNotification } = useNotification();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

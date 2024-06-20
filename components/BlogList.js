@@ -5,7 +5,7 @@ import { fetchBlogs, deleteBlog, editBlog } from "../redux/slices/blogSlice";
 import Image from "next/image";
 import useAuth from "../hooks/useAuth";
 import BlogForm from "./BlogForm";
-
+import { showToast } from "@/redux/slices/toastSlice";
 const BlogList = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blog.blogs);
@@ -30,8 +30,16 @@ const BlogList = () => {
     setSelectedBlog(null);
   };
 
-  const handleDelete = (blogId) => {
-    dispatch(deleteBlog(blogId));
+  const handleDelete = async (blogId) => {
+    const result = await dispatch(deleteBlog(blogId));
+    if (result.type === "blogs/deleteBlog/fulfilled") {
+      dispatch(
+        showToast({
+          message: "Blog post deleted successfully!",
+          type: "success",
+        })
+      );
+    }
   };
 
   const handleEdit = (blog) => {

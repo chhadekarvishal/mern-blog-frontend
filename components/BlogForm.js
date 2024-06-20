@@ -63,7 +63,7 @@ const BlogForm = ({ blog, onClose }) => {
       ["bold", "italic", "underline", "strike", "blockquote"],
       [{ list: "ordered" }, { list: "bullet" }],
       ["link"],
-      // ["link", "image", "video"],
+      ["link", "image", "video"],
       ["clean"],
     ],
   };
@@ -80,8 +80,8 @@ const BlogForm = ({ blog, onClose }) => {
     "list",
     "bullet",
     "link",
-    // "image",
-    // "video",
+    "image",
+    "video",
   ];
 
   return (

@@ -18,7 +18,6 @@ const LoginForm = () => {
     try {
       setLoading(true);
       const result = await dispatch(login({ email, password }));
-      debugger;
       if (result.type === "blogs/login/fulfilled") {
         dispatch(showToast({ message: "Login successful!", type: "success" }));
         router.push("/");

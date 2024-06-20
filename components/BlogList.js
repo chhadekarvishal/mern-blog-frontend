@@ -6,6 +6,8 @@ import Image from "next/image";
 import useAuth from "../hooks/useAuth";
 import BlogForm from "./BlogForm";
 import { showToast } from "@/redux/slices/toastSlice";
+import Link from "next/link";
+
 const BlogList = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blog.blogs);
@@ -80,7 +82,10 @@ const BlogList = () => {
           />
         </div>
         <div className="flex-grow ml-4">
-          <h3 className="text-xl font-semibold">{blog.title}</h3>
+          {/* <h3 className="text-xl font-semibold">{blog.title}</h3> */}
+          <Link href={`/blog/${blog._id}`} className="text-xl font-semibold">
+            {blog.title}
+          </Link>
           <p className="text-gray-600">
             {/* {blog.content.substring(0, 100)}... */}
             {stripHtmlTags(blog.content).substring(0, 100)}...

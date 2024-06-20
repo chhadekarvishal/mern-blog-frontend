@@ -44,7 +44,7 @@ const NavBar = () => {
             </>
           )}
           <div>
-            <ThemeSwitcher />
+            {/* <ThemeSwitcher /> */}
           </div>
         </div>
       </div>

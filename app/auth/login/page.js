@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../../redux/slices/authSlice";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
+import { showToast } from "@/redux/slices/toastSlice";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -16,12 +17,14 @@ const LoginForm = () => {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      await dispatch(login({ email, password }));
-      // showNotification("Login successful!", "success");
-      router.push("/");
+      const result = await dispatch(login({ email, password }));
+      if (result.type === "blogs/login/fulfilled") {
+        dispatch(showToast({ message: "Login successful!", type: "success" }));
+        router.push("/");
+      }
     } catch (error) {
       console.error("Login error:", error);
-      // showNotification("Login failed. Please check your credentials.", "error");
+      dispatch(showToast({ message: "Login failed!", type: "error" }));
     } finally {
       setLoading(false);
     }

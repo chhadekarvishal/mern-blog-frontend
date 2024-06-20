@@ -1,29 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { showToast } from "./toastSlice";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// Function to store token in localStorage
+// Function to store token in Cookies
 const storeToken = (token) => {
-  localStorage.setItem("token", token);
+  Cookies.set("token", token, { expires: 1 }); // Store token with expiration time
 };
 
-// Function to remove token from localStorage
+// Function to remove token from Cookies
 const removeToken = () => {
-  localStorage.removeItem("token");
+  Cookies.remove("token");
 };
 
 export const login = createAsyncThunk("auth/login", async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, userData);
-
-    if (response.request.status == 200) {
-      alert("Login successful!", "success");
+    if (response.status === 200) {
       const { user } = response.data;
       storeToken(user?.token);
       return { user };
     } else {
-      alert("Login failed!", "Error");
+      return;
     }
   } catch (error) {
     throw Error(error.response.data.message);
@@ -33,7 +33,7 @@ export const login = createAsyncThunk("auth/login", async (userData) => {
 export const register = createAsyncThunk("auth/register", async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/auth/register`, userData);
-    if (response.status == 201) {
+    if (response.status === 201) {
       alert("Register successful!", "success");
       const { user } = response.data;
       storeToken(user?.token);
@@ -49,7 +49,7 @@ export const register = createAsyncThunk("auth/register", async (userData) => {
 export const logout = createAsyncThunk("auth/logout", async () => {
   try {
     await axios.post(`${API_URL}/auth/logout`);
-    // Remove token from localStorage
+    // Remove token from Cookies
     removeToken();
   } catch (error) {
     console.error("Logout error:", error);
@@ -98,7 +98,7 @@ const authSlice = createSlice({
         state.status = "idle";
         state.isAuthenticated = false;
         state.user = null;
-        // Remove token from localStorage
+        // Remove token from Cookies
         removeToken();
       });
   },

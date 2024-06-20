@@ -3,6 +3,16 @@ import axios from "../../utils/api";
 import { getToken } from "@/utils/authToken";
 import { showToast } from "./toastSlice";
 
+// Function to get JWT token
+const getAuthToken = () => {
+  const token = getToken();
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
 export const fetchBlogs = createAsyncThunk("blogs/fetchBlogs", async () => {
   const response = await axios.get("/blogs");
   return response.data;
@@ -12,12 +22,7 @@ export const addBlog = createAsyncThunk(
   "blogs/addBlog",
   async (blogData, { rejectWithValue }) => {
     try {
-      const token = getToken();
-      const response = await axios.post("/blogs", blogData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post("/blogs", blogData, getAuthToken());
       return response.data;
     } catch (error) {
       showToast({
@@ -33,16 +38,11 @@ export const deleteBlog = createAsyncThunk(
   "blogs/deleteBlog",
   async (id, { rejectWithValue }) => {
     try {
-      const token = getToken();
-      const res = await axios.delete(`/blogs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res?.status === 200) {
+      const response = await axios.delete(`/blogs/${id}`, getAuthToken());
+      if (response?.status === 200) {
         showToast({
           message: "Blog post deleted successfully",
-          type: "error",
+          type: "success",
         });
         return id;
       }
@@ -60,12 +60,11 @@ export const editBlog = createAsyncThunk(
   "blogs/editBlog",
   async ({ id, updatedBlog }, { rejectWithValue }) => {
     try {
-      const token = getToken();
-      const response = await axios.put(`/blogs/${id}`, updatedBlog, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.put(
+        `/blogs/${id}`,
+        updatedBlog,
+        getAuthToken()
+      );
       if (response.status === 200) {
         return response.data;
       }
@@ -75,6 +74,7 @@ export const editBlog = createAsyncThunk(
     }
   }
 );
+
 const blogSlice = createSlice({
   name: "blogs",
   initialState: {

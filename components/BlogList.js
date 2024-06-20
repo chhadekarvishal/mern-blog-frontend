@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchBlogs, deleteBlog } from "../redux/slices/blogSlice";
+import { fetchBlogs, deleteBlog, editBlog } from "../redux/slices/blogSlice";
 import Image from "next/image";
 import useAuth from "../hooks/useAuth";
 import BlogForm from "./BlogForm";
@@ -13,6 +13,13 @@ const BlogList = () => {
   const error = useSelector((state) => state.blog.error);
   const { isAuthenticated } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+
+  useEffect(() => {
+    if (blogStatus === "idle") {
+      dispatch(fetchBlogs());
+    }
+  }, [blogStatus, isModalOpen, dispatch]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -20,16 +27,22 @@ const BlogList = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedBlog(null);
   };
-
-  useEffect(() => {
-    if (blogStatus === "idle") {
-      dispatch(fetchBlogs());
-    }
-  }, [blogStatus, dispatch]);
 
   const handleDelete = (blogId) => {
     dispatch(deleteBlog(blogId));
+  };
+
+  const handleEdit = (blog) => {
+    setSelectedBlog(blog);
+    setIsModalOpen(true);
+  };
+
+  const stripHtmlTags = (html) => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
   };
 
   let content;
@@ -44,7 +57,7 @@ const BlogList = () => {
       >
         <div className="flex-shrink-0">
           <Image
-            src="/path/to/thumbnail.jpg"
+            src={blog.thumbnailUrl}
             alt="Thumbnail"
             width={100}
             height={100}
@@ -53,12 +66,17 @@ const BlogList = () => {
         </div>
         <div className="flex-grow ml-4">
           <h3 className="text-xl font-semibold">{blog.title}</h3>
-          <p className="text-gray-600">{blog.content.substring(0, 100)}...</p>
+          <p className="text-gray-600">
+            {stripHtmlTags(blog.content).substring(0, 100)}...
+          </p>
         </div>
         <div className="ml-4">
           {isAuthenticated && (
             <>
-              <button className="text-blue-500 hover:text-blue-700 mr-2">
+              <button
+                className="text-blue-500 hover:text-blue-700 mr-2"
+                onClick={() => handleEdit(blog)}
+              >
                 Edit
               </button>
               <button
@@ -88,7 +106,7 @@ const BlogList = () => {
         </button>
       </div>
       {content}
-      {isModalOpen && <BlogForm onClose={closeModal} />}
+      {isModalOpen && <BlogForm onClose={closeModal} blog={selectedBlog} />}
     </div>
   );
 };

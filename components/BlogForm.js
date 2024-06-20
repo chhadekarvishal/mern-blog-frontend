@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import { useDispatch } from "react-redux";
 import "react-quill/dist/quill.snow.css"; // Import styles for Quill
-import { addBlog } from "@/redux/slices/blogSlice";
+import { addBlog, editBlog } from "@/redux/slices/blogSlice";
+import { useRouter } from "next/navigation";
 
 const BlogForm = ({ blog, onClose, onSubmit }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [title, setTitle] = useState(blog ? blog.title : "");
   const [thumbnailUrl, setThumbnailUrl] = useState(
@@ -16,11 +18,29 @@ const BlogForm = ({ blog, onClose, onSubmit }) => {
     setContent(html);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = dispatch(addBlog({ title, thumbnailUrl, content }));
-    debugger
-    console.log("REs: ", res)
+    if (blog == null) {
+      const result = await dispatch(addBlog({ title, thumbnailUrl, content }));
+      if (result.type === "blogs/addBlog/fulfilled") {
+        router.push("/");
+      } else {
+        alert("Error creating blog");
+      }
+    } else {
+      const result = await dispatch(
+        editBlog({
+          id: blog._id,
+          updatedBlog: { title, thumbnailUrl, content },
+        })
+      );
+      if (result.type === "blogs/editBlog/fulfilled") {
+        router.push("/");
+      } else {
+        alert("Error updating blog");
+      }
+    }
+    onClose();
   };
 
   // Define Quill modules and formats

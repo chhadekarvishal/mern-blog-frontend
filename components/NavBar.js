@@ -10,7 +10,6 @@ const NavBar = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    // dispatch(logout());
     router.push("/auth/login");
     removeToken();
   };
@@ -26,7 +25,7 @@ const NavBar = () => {
         <div className="flex space-x-4">
           <NavLink href="/blogs" text="Blogs" />
           <NavLink href="/contact" text="About" />
-          <NavLink href="/auth/signup" text="Signup" />
+          {/* <NavLink href="/auth/signup" text="Signup" /> */}
           {isAuthenticated ? (
             <>
               <NavLink href="/profile" text="Profile" />

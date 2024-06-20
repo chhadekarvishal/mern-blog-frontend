@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import ReactQuill from "react-quill";
 import { useDispatch } from "react-redux";
+import dynamic from "next/dynamic"; // Import dynamic from next/dynamic
 import "react-quill/dist/quill.snow.css"; // Import styles for Quill
 import { addBlog, editBlog } from "@/redux/slices/blogSlice";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { showToast } from "@/redux/slices/toastSlice";
 
-const BlogForm = ({ blog, onClose, onSubmit }) => {
+// Import ReactQuill dynamically with { ssr: false }
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+const BlogForm = ({ blog, onClose }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [title, setTitle] = useState(blog ? blog.title : "");
@@ -54,32 +57,10 @@ const BlogForm = ({ blog, onClose, onSubmit }) => {
 
   // Define Quill modules and formats
   const quillModules = {
-    toolbar: [
-      //   [{ header: "1" }, { header: "2" }, { font: [] }],
-      //   [{ size: [] }],
-      ["bold", "italic", "underline"],
-      //   ["bold", "italic", "underline", "strike", "blockquote"],
-      //   [{ list: "ordered" }, { list: "bullet" }],
-      //   ["link", "image", "video"],
-      //   ["clean"],
-    ],
+    toolbar: [["bold", "italic", "underline"]],
   };
 
-  const quillFormats = [
-    // "header",
-    // "font",
-    // "size",
-    "bold",
-    "italic",
-    "underline",
-    // "strike",
-    // "blockquote",
-    // "list",
-    // "bullet",
-    // "link",
-    // "image",
-    // "video",
-  ];
+  const quillFormats = ["bold", "italic", "underline"];
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -110,13 +91,6 @@ const BlogForm = ({ blog, onClose, onSubmit }) => {
           </div>
           <div className="mb-4 flex-grow">
             <label className="block text-gray-700 text-lg">Content</label>
-            {/* <ReactQuill
-              value={content}
-              onChange={handleQuillChange}
-              className="quill-editor"
-              modules={quillModules}
-              formats={quillFormats}
-            /> */}
             <div className="quill-container">
               <ReactQuill
                 value={content}

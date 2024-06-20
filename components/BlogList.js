@@ -48,6 +48,13 @@ const BlogList = () => {
   };
 
   const stripHtmlTags = (html) => {
+    // Check if window is defined to ensure execution only in the browser
+    if (typeof window === "undefined") {
+      // Return a basic strip of HTML tags (non-ideal, but avoids SSR issues)
+      return html.replace(/<[^>]+>/g, "");
+    }
+
+    // If running in the browser, use a temporary div to strip HTML tags
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     return tempDiv.textContent || tempDiv.innerText || "";
@@ -75,6 +82,7 @@ const BlogList = () => {
         <div className="flex-grow ml-4">
           <h3 className="text-xl font-semibold">{blog.title}</h3>
           <p className="text-gray-600">
+            {/* {blog.content.substring(0, 100)}... */}
             {stripHtmlTags(blog.content).substring(0, 100)}...
           </p>
         </div>
